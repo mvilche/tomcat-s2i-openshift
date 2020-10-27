@@ -18,14 +18,24 @@ if [[ "$1" == "-h" ]]; then
 fi
 
 if [ ! -f /tmp/src/pom.xml ]; then
-  echo "FATAL - No pom.xml found"
+
+if [ ! -f /tmp/src/build.gradle ]; then
+  echo "FATAL - No build.gradle or pom.xml found"
   exit 1
+fi
+
 fi
 
 
 if [ -d /tmp/artifacts/.m2 ]; then
-  echo "---> Restoring build artifacts..."
+  echo "---> Restoring build maven artifacts..."
   mv /tmp/artifacts/.m2 /home/s2i/
+  rm -rf /tmp/artifacts
+fi
+
+if [ -d /tmp/artifacts/.gradle ]; then
+  echo "---> Restoring build gradle artifacts..."
+  mv /tmp/artifacts/.gradle /home/s2i/
   rm -rf /tmp/artifacts
 fi
 
@@ -67,24 +77,7 @@ EOF
 fi
 
 
-
-if [ -z "$EXTRA_REPO" ]; then
-echo "NO EXTRA_REPO ENCONTRADO"
-else
-echo "EXTRA_REPO ENCONTRADO - COMPILANDO REPOSITORIO ADICIONAL.."
-mkdir /opt/extra_repo && cd /opt/extra_repo && \
-git clone $EXTRA_REPO . && \
-mvn clean install -Dfile.encoding=UTF-8 ${MVN_OPTS}
-
-ERR=$?
-    if [ $ERR -ne 0 ]; then
- echo "LA COMPILACION SALIO CON CODIGO DE ERROR $ERR"
-exit $ERR
-fi
-
-echo "COMPILADO EXTRA_REPO FINALIZADO - LIMPIANDO DIRECTORIOS.." && rm -rf /opt/extra_repo
-fi
-
+if [ -f /opt/src/pom.xml ]; then
 echo "---> COMPILANDO CODIGO FUENTE..."
 cd /opt/src && mvn clean package -Dfile.encoding=UTF-8 ${MVN_OPTS}
 
@@ -94,11 +87,48 @@ echo "LA COMPILACION SALIO CON CODIGO DE ERROR $ERR"
 exit $ERR
 
 fi
+fi
+
+if [ -f /opt/src/build.gradle ]; then
+echo "---> COMPILANDO CODIGO FUENTE..."
+cd /opt/src && gradle clean build
+
+ERR=$?
+    if [ $ERR -ne 0 ]; then
+echo "LA COMPILACION SALIO CON CODIGO DE ERROR $ERR"
+exit $ERR
+
+fi
+fi
+
+
 
 echo "---> COPIANDO APLICACION GENERADA AL DIRECTORIO DE DEPLOY..."
 cd /opt/src && find . -name '*.war' | xargs cp -t /opt/tomcat/webapps  && echo "APP INSTALADA!"
 
-mv /opt/tomcat/webapps/*.war /opt/tomcat/webapps/ROOT.war
 ls -1 /opt/tomcat/webapps/
+
+
+if [ ! -z "$MKDOCS_DIR" ]; then
+echo "---> MKDOCS_DIR ENCONTRADO - GENERANDO DOCUMENTACION"
+
+if [ ! -d "/opt/src/$MKDOCS_DIR" ]; then
+echo "---> ERROR - MKDOCS_DIR NO EXISTE - SALIENDO"
+exit 1
+fi
+
+cd /opt/src/$MKDOCS_DIR && mkdocs build -v -d generate_docs
+if [ ! -z "$MKDOCS_CONTEXT_PATH" ]; then
+echo "---> MKDOCS_CONTEXT_PATH ENCONTRADO - USANDO CONTEXT PATH /$MKDOCS_CONTEXT_PATH"
+cp -rf /opt/src/$MKDOCS_DIR/generate_docs /opt/tomcat/webapps/$MKDOCS_CONTEXT_PATH
+else
+echo "---> MKDOCS_CONTEXT_PATH NO ENCONTRADO - DESPLEGANDO DOCUMENTACION EN /"
+cp -rf /opt/src/$MKDOCS_DIR/generate_docs /opt/tomcat/webapps/ROOT
+fi
+echo "---> DOCUMENTACION GENERADA!"
+fi
+
 cd $HOME && rm -rf /opt/src
 /usr/libexec/s2i/fix /opt/tomcat
+
+echo "---> TODAS LAS TAREAS FUERON COMPLETADAS!"
