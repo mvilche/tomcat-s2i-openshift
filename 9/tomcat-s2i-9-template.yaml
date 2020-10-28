@@ -173,8 +173,8 @@
             - name: MKDOCS_CONTEXT_PATH
               value: ${MKDOCS_CONTEXT_PATH}
           from:
-            kind: DockerImage
-            name: mvilche/tomcat-s2i:${TOMCAT_VERSION}-jdk${VERSION_JDK}-alpine
+            kind: ImageStreamTag
+            name: tomcat-${TOMCAT_VERSION}-s2i:${TOMCAT_VERSION}-jdk${VERSION_JDK}-alpine
         type: Source
       successfulBuildsHistoryLimit: 5
       triggers:
@@ -215,8 +215,8 @@
         dockerStrategy:
           forcePull: true
           from:
-            kind: DockerImage
-            name: mvilche/tomcat-s2i:${TOMCAT_VERSION}-jre${VERSION_JDK}-alpine
+            kind: ImageStreamTag
+            name: tomcat-${TOMCAT_VERSION}-runtime:${TOMCAT_VERSION}-jre${VERSION_JDK}-alpine
         type: Docker
       triggers:
       - type: "imageChange"
