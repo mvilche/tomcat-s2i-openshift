@@ -108,6 +108,12 @@ cd /opt/src && find . -name '*.war' | xargs cp -t /opt/tomcat/webapps  && echo "
 
 ls -1 /opt/tomcat/webapps/
 
+echo "---> GENERANDO HEALTH CHECK"
+mkdir -p /opt/tomcat/webapps/health
+cat << EOF > /opt/tomcat/webapps/health/index.html
+<h1 style="color: #5e9ca0;">APACHE TOMCAT IS READY!</h1>
+EOF
+
 
 if [ ! -z "$MKDOCS_DIR" ]; then
 echo "---> MKDOCS_DIR ENCONTRADO - GENERANDO DOCUMENTACION"
@@ -116,13 +122,6 @@ if [ ! -d "/opt/src/$MKDOCS_DIR" ]; then
 echo "---> ERROR - MKDOCS_DIR NO EXISTE - SALIENDO"
 exit 1
 fi
-
-echo "---> GENERANDO HEALTH CHECK"
-mkdir -p /opt/tomcat/webapps/health
-cat << EOF > /opt/tomcat/webapps/health/index.html
-<h1 style="color: #5e9ca0;">APACHE TOMCAT IS READY!</h1>
-EOF
-
 
 cd /opt/src/$MKDOCS_DIR && mkdocs build -v -d generate_docs
 if [ ! -z "$MKDOCS_CONTEXT_PATH" ]; then
