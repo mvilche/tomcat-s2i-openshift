@@ -121,13 +121,13 @@ cd /opt/src/$MKDOCS_DIR && mkdocs build -v -d generate_docs
 if [ ! -z "$MKDOCS_CONTEXT_PATH" ]; then
 echo "---> MKDOCS_CONTEXT_PATH ENCONTRADO - USANDO CONTEXT PATH /$MKDOCS_CONTEXT_PATH"
 cp -rf /opt/src/$MKDOCS_DIR/generate_docs /opt/tomcat/webapps/$MKDOCS_CONTEXT_PATH
-else
-echo "---> MKDOCS_CONTEXT_PATH NO ENCONTRADO - DESPLEGANDO DOCUMENTACION EN /"
-cp -rf /opt/src/$MKDOCS_DIR/generate_docs /opt/tomcat/webapps/ROOT
 mkdir -p /opt/tomcat/webapps/health
 cat << EOF > /opt/tomcat/webapps/health/index.html
 <h1 style="color: #5e9ca0;">APACHE TOMCAT IS READY!</h1>
 EOF
+else
+echo "---> MKDOCS_CONTEXT_PATH NO ENCONTRADO - DESPLEGANDO DOCUMENTACION EN /"
+cp -rf /opt/src/$MKDOCS_DIR/generate_docs /opt/tomcat/webapps/ROOT
 fi
 echo "---> DOCUMENTACION GENERADA!"
 else
