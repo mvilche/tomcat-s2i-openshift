@@ -2,7 +2,7 @@ FROM alpine:3.12
 
 ENV MAVEN_VERSION=3.6.3 \
 GRADLE_VERSION=gradle-6.2.2-bin.zip \
-JDK_VERSION=openjdk8-jdk \
+JDK_VERSION=openjdk8 \
 TOMCAT_VERSION=https://downloads.apache.org/tomcat/tomcat-8/v8.5.60/bin/apache-tomcat-8.5.60.tar.gz
 
 LABEL autor="Martin Vilche <mfvilche@gmail.com>" \
