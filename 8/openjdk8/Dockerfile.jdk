@@ -1,0 +1,52 @@
+FROM alpine:3.12
+
+ENV MAVEN_VERSION=3.6.3 \
+GRADLE_VERSION=gradle-6.2.2-bin.zip \
+JDK_VERSION=openjdk8-jdk \
+TOMCAT_VERSION=https://downloads.apache.org/tomcat/tomcat-8/v8.5.60/bin/apache-tomcat-8.5.60.tar.gz
+
+LABEL autor="Martin Vilche <mfvilche@gmail.com>" \
+      io.k8s.description="Compilador de aplicaciones java con maven s2i" \
+      io.k8s.display-name="Java Applications" \
+      io.openshift.tags="builder,java,maven" \
+      io.openshift.expose-services="8080,8009,8443,8778" \
+      org.tomcat.deployments-dir="/opt/tomcat/webapps" \
+      io.openshift.s2i.scripts-url="image:///usr/libexec/s2i"
+
+RUN apk add --update --no-cache $JDK_VERSION wget unzip bash git findutils busybox-extras msttcorefonts-installer python3 python3-dev py3-pip gcc musl-dev curl \
+fontconfig which openssh shadow busybox-suid coreutils tzdata && pip install mkdocs && apk del --purge  musl-dev python3-dev gcc
+
+RUN mkdir -p /opt/tomcat /opt/config /opt/maven /opt/gradle && rm -rf /etc/localtime && \
+wget -q http://www-eu.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
+tar xzf apache-maven-${MAVEN_VERSION}-bin.tar.gz -C /opt/maven && rm apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
+ln -s /opt/maven/apache-maven-${MAVEN_VERSION}/bin/mvn /usr/bin/mvn && \
+wget -q https://services.gradle.org/distributions/$GRADLE_VERSION && \
+unzip $GRADLE_VERSION && cp -rf gradle-*/* /opt/gradle && rm -rf *.zip gradle-* && \
+ln -s /opt/gradle/bin/gradle /usr/bin/gradle && \
+    update-ms-fonts && \
+    fc-cache -f && \
+wget $TOMCAT_VERSION --progress=bar:force -O /tmp/tomcat.tar.gz && \
+tar zxvf /tmp/tomcat.tar.gz -C /opt/tomcat --strip-components 1 && rm -rf /tmp/tomcat.tar.gz
+
+COPY contrib/drivers/*.jar /opt/tomcat/lib/
+
+COPY contrib/jolokia-jvm-1.6.2-agent.jar /usr/libexec/s2i/jolokia-jvm-1.6.2-agent.jar
+
+COPY s2i/bin/ /usr/libexec/s2i
+
+RUN rm -rf /opt/tomcat/webapps/* && touch /etc/localtime /etc/timezone && adduser -D -u 1001 s2i && usermod -aG 0 s2i && \
+chown -R 1001 /opt /home/s2i /usr/libexec/s2i /etc/localtime /etc/timezone  && \
+chgrp -R 0 /opt /home/s2i /usr/libexec/s2i /etc/localtime /etc/timezone  && \
+chmod -R g=u /opt /usr/libexec/s2i /etc/localtime /etc/timezone && \
+chmod +x /opt/tomcat/bin/* /usr/libexec/s2i/*
+
+WORKDIR /opt/tomcat
+
+ENV HOME /home/s2i
+
+USER 1001:0
+
+EXPOSE 8080 8443 8009 8778
+
+CMD ["/usr/libexec/s2i/usage"]
+

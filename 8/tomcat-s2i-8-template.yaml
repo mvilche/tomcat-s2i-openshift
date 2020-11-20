@@ -591,11 +591,11 @@
       required: true
     - name: TOMCAT_VERSION
       displayName: Versión de tomcat a utilizar
-      value: '9'
+      value: '8'
       required: true
     - name: VERSION_JDK
       displayName: Versión de OPENJDK
-      value: '11'
+      value: '8'
       required: true
     - name: REPO_GIT
       displayName: Repositorio git donde se encuentra la aplicacion
