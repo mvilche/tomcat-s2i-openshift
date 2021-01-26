@@ -1,7 +1,7 @@
 FROM alpine:3.12
 
 ENV JDK_VERSION=openjdk11-jre \
-TOMCAT_VERSION=https://downloads.apache.org/tomcat/tomcat-9/v9.0.39/bin/apache-tomcat-9.0.39.tar.gz
+TOMCAT_VERSION=https://downloads.apache.org/tomcat/tomcat-9/v9.0.41/bin/apache-tomcat-9.0.41.tar.gz
 
 LABEL autor="Martin Vilche <mfvilche@gmail.com>" \
       io.k8s.description="Runtime image jdk alpine" \
