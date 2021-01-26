@@ -3,7 +3,7 @@ FROM alpine:3.12
 ENV MAVEN_VERSION=3.6.3 \
 GRADLE_VERSION=gradle-6.2.2-bin.zip \
 JDK_VERSION=openjdk11-jdk \
-TOMCAT_VERSION=https://downloads.apache.org/tomcat/tomcat-9/v9.0.39/bin/apache-tomcat-9.0.39.tar.gz
+TOMCAT_VERSION=https://downloads.apache.org/tomcat/tomcat-9/v9.0.41/bin/apache-tomcat-9.0.41.tar.gz
 
 LABEL autor="Martin Vilche <mfvilche@gmail.com>" \
       io.k8s.description="Compilador de aplicaciones java con maven s2i" \
