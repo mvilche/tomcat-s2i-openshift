@@ -13,7 +13,7 @@ LABEL autor="Martin Vilche <mfvilche@gmail.com>" \
       org.tomcat.deployments-dir="/opt/tomcat/webapps" \
       io.openshift.s2i.scripts-url="image:///usr/libexec/s2i"
 
-RUN apk add --update --no-cache $JDK_VERSION wget unzip bash git findutils nodejs busybox-extras msttcorefonts-installer python3 python3-dev py3-pip gcc musl-dev curl \
+RUN apk add --update --no-cache $JDK_VERSION wget unzip bash git nodejs findutils nodejs busybox-extras msttcorefonts-installer python3 python3-dev py3-pip gcc musl-dev curl \
 fontconfig which openssh shadow busybox-suid coreutils tzdata && pip install mkdocs && apk del --purge  musl-dev python3-dev gcc
 
 RUN mkdir -p /opt/tomcat /opt/config /opt/maven /opt/gradle && rm -rf /etc/localtime && \
