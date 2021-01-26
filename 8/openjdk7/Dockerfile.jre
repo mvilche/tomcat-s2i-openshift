@@ -1,8 +1,7 @@
 FROM alpine:3.12
 
 ENV JDK_VERSION=openjdk7-jre \
-TOMCAT_VERSION=https://downloads.apache.org/tomcat/tomcat-8/v8.5.60/bin/apache-tomcat-8.5.60.tar.gz
-
+TOMCAT_VERSION=https://downloads.apache.org/tomcat/tomcat-8/v8.5.61/bin/apache-tomcat-8.5.61.tar.gz
 LABEL autor="Martin Vilche <mfvilche@gmail.com>" \
       io.k8s.description="Runtime image jdk alpine" \
       io.k8s.display-name="Java Applications" \
