@@ -21,10 +21,10 @@ COPY contrib/drivers/*.jar /opt/tomcat/lib/
 COPY contrib/jolokia-jvm-1.6.2-agent.jar /usr/libexec/s2i/jolokia-jvm-1.6.2-agent.jar
 COPY s2i/bin/ /usr/libexec/s2i
 
-RUN rm -rf /opt/tomcat/webapps/* && touch /etc/localtime /etc/timezone && \
-chown -R 1001 /opt /usr/libexec/s2i /etc/localtime /etc/timezone  && \
-chgrp -R 0 /opt /usr/libexec/s2i /etc/localtime /etc/timezone  && \
-chmod -R g=u /opt /usr/libexec/s2i /etc/localtime /etc/timezone && \
+RUN rm -rf /opt/tomcat/webapps/* && touch /etc/localtime /etc/timezone && mkdir /etc/cas && \
+chown -R 1001 /opt /usr/libexec/s2i /etc/localtime /etc/timezone /etc/cas  && \
+chgrp -R 0 /opt /usr/libexec/s2i /etc/localtime /etc/timezone /etc/cas  && \
+chmod -R g=u /opt /usr/libexec/s2i /etc/localtime /etc/timezone /etc/cas && \
 chmod +x /opt/tomcat/bin/* /usr/libexec/s2i/*
 
 WORKDIR /opt/tomcat
