@@ -43,14 +43,6 @@ echo "---> INSTALANDO CODIGO FUENTE..."
 mkdir /opt/src
 cp -Rf /tmp/src/* /opt/src/
 
-if [ -z "$TAG_VERSION" ]; then
-  echo "NO VARIABLE TAG_VERSION ENCONTRADA USANDO latest"
-else
-
-echo "VARIABLE TAG_VERSION ENCONTRADA USANDO: $TAG_VERSION"
-echo $TAG_VERSION > /opt/version
-fi
-
 
 if [ -z "$NEXUS_MIRROR_URL" ]; then
 echo "NO NEXUS_MIRROR_URL ENCONTRADO"
